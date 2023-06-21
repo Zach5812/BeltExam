@@ -1,0 +1,72 @@
+@model List<Coupon>
+
+<nav style="display: flex; align-items: center; width: 100%; justify-content: space-evenly; margin: 0 auto;">
+    <h4>Welcome @Context.Session.GetString("UserName")</h4>
+    <a asp-action="AddCoupon" asp-controller="Coupon">Add a Coupon</a>
+    <a asp-action="AccountInfo" asp-controller="Home" asp-route-userId='@Context.Session.GetInt32("UUID")'>Account
+        Info</a>
+    <a>Coupon Hub</a>
+    @{
+        if (Context.Session.GetInt32("UUID") != null)
+        {
+            <form asp-action="logout" asp-controller="Coupon" method="POST">
+                <button
+                    style="background-color: transparent; border: none; cursor:pointer; color:blue; text-decoration:underline;"
+                    type="submit">Logout</button>
+            </form>
+        }
+    }
+</nav>
+<div style="display: flex;">
+    @foreach (Coupon coupon in Model)
+    {
+        bool alreadyCouponUser = coupon.CouponUsers.Any(c => c.UserId == Context.Session.GetInt32("UUID"));
+        bool alreadyExpired = coupon.Expireds.Any(c => c.UserId == Context.Session.GetInt32("UUID"));
+        <div class="card" style="width: 12rem; text-align: center">
+            <h4 class="card-title">@coupon.CouponCode</h4>
+            <h5 class="card-title">Use on: @coupon.Website</h5>
+            <p>@coupon.CouponUsers.Count have used this</p>
+            <p class="card-text">@coupon.Description</p>
+            @* CouponUser *@
+            @if (Context.Session.GetInt32("UUID") == coupon.UserId)
+            {
+                <p>You posted this</p>
+            }
+            @if (Context.Session.GetInt32("UUID") != coupon.UserId)
+            {
+                <p>
+                    @if (alreadyCouponUser)
+                    {
+                        <span>You Used This</span>
+                    }
+                    else
+                    {
+                    <form asp-action="CouponUserTo" asp-controller="Coupon" asp-route-couponId="@coupon.CouponId" method="post">
+                        <button type="submit">
+                            <span>Use this coupon</span>
+                        </button>
+                    </form>
+                    }
+                </p>
+            }
+            @* Expired *@
+            <p>@coupon.Expireds.Count have marked this as expired</p>
+                <p>
+                    @if (alreadyExpired)
+                    {
+                        <span>You marked as expired</span>
+                    }
+                    else
+                    {
+                    <form asp-action="MarkExpired" asp-controller="Coupon" asp-route-couponId="@coupon.CouponId" method="post">
+                        <button type="submit">
+                            <span>Mark Expired</span>
+                        </button>
+                    </form>
+                    }
+                </p>
+            <p>@coupon.User?.UserName</p>
+        </div>
+    }
+</div>
+

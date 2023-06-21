@@ -1,0 +1,22 @@
+@model User
+<nav style="display: flex; align-items: center; width: 100%; justify-content: space-evenly; margin: 0 auto;">
+    <h4>Welcome @Context.Session.GetString("UserName")</h4>
+    <a asp-action="AddCoupon" asp-controller="Coupon">Add a Coupon</a>
+    <a>Account Info</a>
+    <a asp-action="Coupons" asp-controller="Coupon">Coupon Hub</a>
+    @{
+        if (Context.Session.GetInt32("UUID") != null)
+        {
+            <form asp-action="logout" asp-controller="Coupon" method="POST">
+                <button style="background-color: transparent; border: none; cursor:pointer; color:blue; text-decoration:underline;" type="submit">Logout</button>
+            </form>
+        }
+    }
+    </nav>
+<div>
+<h1>Account Information</h1>
+<p>Username: @Model.UserName</p>
+<p>Email: @Model.Email</p>
+<br>
+<p>Coupons posted: @ViewBag.coupons</p>
+<p># of Coupons Used: @Model.CouponUsers?.Count</p></div>

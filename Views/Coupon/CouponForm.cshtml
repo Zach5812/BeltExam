@@ -1,0 +1,42 @@
+@model Coupon
+<nav style="display: flex; align-items: center; width: 100%; justify-content: space-evenly; margin: 0 auto;">
+    <h4>Welcome @Context.Session.GetString("UserName")</h4>
+    <a >Add a Coupon</a>
+    <a asp-action="AccountInfo" asp-controller="Home" asp-route-userId='@Context.Session.GetInt32("UUID")'>Account Info</a>
+    <a asp-action="Coupons" asp-controller="Coupon">Coupon Hub</a>
+    @{
+        if (Context.Session.GetInt32("UUID") != null)
+        {
+            <form asp-action="logout" asp-controller="Coupon" method="POST">
+                <button style="background-color: transparent; border: none; cursor:pointer; color:blue; text-decoration:underline;" type="submit">Logout</button>
+            </form>
+        }
+    }
+    <a>Add a Coupon</a>
+</nav>
+<h2 style="text-align: center;">Plan a Coupon</h2>
+
+<div style="text-align: left;">
+    <form asp-action="CreateCoupon" asp-controller="Coupon" method="post" style="margin: 0 auto; width: 300px;">
+        <div >
+            <div style="display: flex; justify-content: space-between;">
+            <label asp-for="CouponCode"></label>
+            <span style="color: red;" asp-validation-for="CouponCode"></span>
+            <input asp-for="CouponCode">
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+            <label asp-for="Website"></label>
+            <input asp-for="Website">
+            <span style="color: red;" asp-validation-for="Website"></span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+            <label asp-for="Description"></label>
+            <input asp-for="Description">
+            <span style="color: red;" asp-validation-for="Description"></span>
+            </div>
+            <span asp-validation-for="UserId"></span>
+            <input type="hidden" asp-for="UserId" value='@Context.Session.GetInt32("UUID")'>
+            <button type="submit">Create</button>
+        </div>
+    </form>
+</div>
